@@ -3,29 +3,28 @@
 # What would be the one time pad encryption of the message "attack at dusk" under the same OTP key?
 
 # Run the script with pyenv: pyenv exec python question7.py 
+import codecs
 
 def main():    
     message = "attack at dawn"
-    target = "attack at dusk"
-    encryptedMessageHex = "09e1c5f70a65ac519458e7e53f36"
+    target =  "attack at dusk"
+    encryptedMessageHex = "6c73d5240a948c86981bc294814d"
 
-    messageHex = message.encode('utf-8').hex()
-    key = strxor(messageHex, encryptedMessageHex)
-    test = strxor(messageHex, key)
-    if encryptedMessageHex != test:
+    messageBytes = bytes(message, 'ascii')
+    encryptedMessageBytes = bytes.fromhex(encryptedMessageHex)
+    keyBytes = xor(messageBytes, encryptedMessageBytes) 
+
+    verifyBytes = xor(messageBytes, keyBytes)
+    if verifyBytes != encryptedMessageBytes:
         print("failed to verify encryption")
         exit(1)
 
-    targetHex = target.encode('utf-8').hex()
-    encryptedTarget = strxor(targetHex, key)
-    print("Question 7 response")
-    print(encryptedTarget)    
+    targetBytes = bytes(target, 'ascii')
+    encryptedTargetBytes = xor(targetBytes, keyBytes)
+    print(encryptedTargetBytes.hex())
 
-def strxor(a, b):     # xor two strings of different lengths
-    if len(a) > len(b):        
-        return "".join([chr(ord(x) ^ ord(y)) for (x, y) in zip(a[:len(b)], b)])
-    else:
-       return "".join([chr(ord(x) ^ ord(y)) for (x, y) in zip(a, b[:len(a)])])
+def xor(a,b): 
+    return bytes(x^y for x,y in zip(a,b))
 
 if __name__ == "__main__":
     main()
